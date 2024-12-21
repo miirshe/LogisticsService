@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+package logistics;
+
+service LogisticsService {
+  // Fleet Management
+  rpc CreateFleet (CreateFleetRequest) returns (Fleet);
+  rpc UpdateFleetLocation (UpdateFleetLocationRequest) returns (Fleet);
+  rpc GetFleet (GetFleetRequest) returns (Fleet);
+
+  // Delivery Management
+  rpc CreateDelivery (CreateDeliveryRequest) returns (Delivery);
+  rpc UpdateDeliveryStatus (UpdateDeliveryStatusRequest) returns (Delivery);
+  rpc GetDelivery (GetDeliveryRequest) returns (Delivery);
+
+  // Warehouse Management
+  rpc CreateWarehouse (CreateWarehouseRequest) returns (Warehouse);
+  rpc UpdateInventory (UpdateInventoryRequest) returns (Warehouse);
+  rpc GetWarehouse (GetWarehouseRequest) returns (Warehouse);
+
+  // Route Management
+  rpc OptimizeRoute (OptimizeRouteRequest) returns (Route);
+  rpc UpdateRoute (UpdateRouteRequest) returns (Route);
+}
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+  string address = 3;
+}
+
+message Fleet {
+  string id = 1;
+  string vehicleType = 2;
+  string licensePlate = 3;
+  string make = 4;
+  string modelName = 5;
+  int32 year = 6;
+  double capacity = 7;
+  string fuelType = 8;
+  double fuelLevel = 9;
+  string driverName = 10;
+  string driverContact = 11;
+  string driverLicenseNumber = 12;
+  string status = 13;
+  string lastMaintenanceDate = 14;
+  double mileage = 15;
+  Location currentLocation = 16;
+}
+
+message CreateFleetRequest {
+  Fleet fleet = 1;
+}
+
+message UpdateFleetLocationRequest {
+  string fleetId = 1;
+  Location location = 2;
+}
+
+message GetFleetRequest {
+  string id = 1;
+}
+
+message Delivery {
+  string id = 1;
+  string deliveryType = 2;
+  string deliveryStatus = 3;
+  Location origin = 4;
+  Location destination = 5;
+  repeated Location waypoints = 6;
+  string scheduledPickupTime = 7;
+  string actualDeliveryTime = 8;
+  string assignedFleet = 9;
+  repeated DeliveryItem items = 10;
+  string paymentStatus = 11;
+  double paymentAmount = 12;
+}
+
+message DeliveryItem {
+  string name = 1;
+  int32 quantity = 2;
+  double weight = 3;
+  bool fragile = 4;
+}
+
+message CreateDeliveryRequest {
+  Delivery delivery = 1;
+}
+
+message UpdateDeliveryStatusRequest {
+  string deliveryId = 1;
+  string status = 2;
+}
+
+message GetDeliveryRequest {
+  string id = 1;
+}
+
+message Warehouse {
+  string id = 1;
+  string name = 2;
+  Location location = 3;
+  string contactPerson = 4;
+  string contactNumber = 5;
+  double capacity = 6;
+  bool isActive = 7;
+  repeated InventoryItem inventory = 8;
+}
+
+message InventoryItem {
+  string itemName = 1;
+  string sku = 2;
+  int32 quantity = 3;
+  string expiryDate = 4;
+}
+
+message CreateWarehouseRequest {
+  Warehouse warehouse = 1;
+}
+
+message UpdateInventoryRequest {
+  string warehouseId = 1;
+  repeated InventoryItem items = 2;
+}
+
+message GetWarehouseRequest {
+  string id = 1;
+}
+
+message Route {
+  string id = 1;
+  string deliveryId = 2;
+  repeated Location waypoints = 3;
+  repeated Location optimizedRoute = 4;
+  double distance = 5;
+  int32 estimatedTime = 6;
+  string trafficConditions = 7;
+}
+
+message OptimizeRouteRequest {
+  string deliveryId = 1;
+  repeated Location waypoints = 2;
+}
+
+message UpdateRouteRequest {
+  string routeId = 1;
+  repeated Location optimizedRoute = 2;
+}
