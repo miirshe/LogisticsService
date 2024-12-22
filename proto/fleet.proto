@@ -1,0 +1,92 @@
+syntax = "proto3";
+
+package fleet;
+
+service FleetService {
+  rpc CreateFleet (CreateFleetRequest) returns (Fleet) {}
+  rpc GetFleet (GetFleetRequest) returns (Fleet) {}
+  rpc UpdateFleet (UpdateFleetRequest) returns (Fleet) {}
+  rpc DeleteFleet (DeleteFleetRequest) returns (DeleteFleetResponse) {}
+  rpc ListFleets (ListFleetsRequest) returns (ListFleetsResponse) {}
+  rpc AssignDriver (AssignDriverRequest) returns (Fleet) {}
+  rpc TrackFleet (TrackFleetRequest) returns (Fleet) {}
+}
+
+message Fleet {
+  string id = 1;
+  string fleetType = 2;
+  string registrationNumber = 3;
+  string model = 4;
+  string manufacturer = 5;
+  int32 year = 6;
+  string status = 7;
+  string driverId = 8;
+  Location currentLocation = 9;
+  repeated MaintenanceRecord maintenanceRecords = 10;
+  string lastUpdated = 11;
+  map<string, string> meta = 12;
+}
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+  string address = 3;
+  string timestamp = 4;
+}
+
+message MaintenanceRecord {
+  string id = 1;
+  string type = 2;
+  string description = 3;
+  string date = 4;
+  string status = 5;
+  double cost = 6;
+  string technician = 7;
+  string notes = 8;
+}
+
+message CreateFleetRequest {
+  Fleet fleet = 1;
+}
+
+message GetFleetRequest {
+  string id = 1;
+}
+
+message UpdateFleetRequest {
+  string id = 1;
+  Fleet fleet = 2;
+}
+
+message DeleteFleetRequest {
+  string id = 1;
+}
+
+message DeleteFleetResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListFleetsRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string status = 3;
+  string fleetType = 4;
+  string driverId = 5;
+}
+
+message ListFleetsResponse {
+  repeated Fleet fleets = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message AssignDriverRequest {
+  string fleetId = 1;
+  string driverId = 2;
+}
+
+message TrackFleetRequest {
+  string fleetId = 1;
+}

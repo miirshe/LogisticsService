@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+package delivery;
+
+service DeliveryService {
+  rpc CreateDelivery (CreateDeliveryRequest) returns (Delivery) {}
+  rpc GetDelivery (GetDeliveryRequest) returns (Delivery) {}
+  rpc UpdateDeliveryStatus (UpdateDeliveryStatusRequest) returns (Delivery) {}
+  rpc ListDeliveries (ListDeliveriesRequest) returns (ListDeliveriesResponse) {}
+  rpc CancelDelivery (CancelDeliveryRequest) returns (Delivery) {}
+  rpc AssignFleet (AssignFleetRequest) returns (Delivery) {}
+  rpc UpdateDelivery (UpdateDeliveryRequest) returns (Delivery) {}
+  rpc TrackDelivery (TrackDeliveryRequest) returns (Delivery) {}
+  rpc GetDeliveryStatusHistory (GetDeliveryRequest) returns (DeliveryStatusHistory) {}
+  rpc BatchCreateDeliveries (BatchCreateDeliveriesRequest) returns (BatchCreateDeliveriesResponse) {}
+  rpc EstimateDelivery (EstimateDeliveryRequest) returns (EstimateDeliveryResponse) {}
+}
+
+message Delivery {
+  string id = 1;
+  string deliveryType = 2;
+  string deliveryStatus = 3;
+  Location origin = 4;
+  Location destination = 5;
+  repeated Location waypoints = 6;
+  string scheduledPickupTime = 7;
+  string actualDeliveryTime = 8;
+  string assignedFleetId = 9;
+  string driverId = 10;
+  string customerId = 11;
+  repeated DeliveryItem items = 12;
+  repeated Meta meta = 13;
+  string paymentStatus = 14;
+  double paymentAmount = 15;
+  string trackingNumber = 16;
+  int32 deliveryAttempts = 17;
+  string lastAttemptTime = 18;
+  string failureReason = 19;
+  string notes = 20;
+  string specialInstructions = 21;
+  string recipientName = 22;
+  string recipientContact = 23;
+  string recipientEmail = 24;
+  bool insurance = 25;
+  double insuranceAmount = 26;
+  string createdAt = 27;
+  string updatedAt = 28;
+}
+
+message DeliveryItem {
+  string id = 1;
+  string name = 2;
+  int32 quantity = 3;
+  double weight = 4;
+  bool fragile = 5;
+  map<string, string> meta = 6;
+}
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+  string address = 3;
+  string city = 4;
+  string state = 5;
+  string country = 6;
+  string postalCode = 7;
+  string timestamp = 8;
+}
+
+message Meta {
+  string key = 1;
+  string value = 2;
+}
+
+message CreateDeliveryRequest {
+  Delivery delivery = 1;
+}
+
+message GetDeliveryRequest {
+  string id = 1;
+}
+
+message UpdateDeliveryStatusRequest {
+  string deliveryId = 1;
+  string status = 2;
+  string notes = 3;
+  string timestamp = 4;
+  string updatedBy = 5;
+}
+
+message ListDeliveriesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string status = 3;
+  string customerId = 4;
+  string driverId = 5;
+  string fleetId = 6;
+  string deliveryType = 7;
+  string startDate = 8;
+  string endDate = 9;
+}
+
+message ListDeliveriesResponse {
+  repeated Delivery deliveries = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message CancelDeliveryRequest {
+  string deliveryId = 1;
+  string reason = 2;
+  string canceledBy = 3;
+}
+
+message AssignFleetRequest {
+  string deliveryId = 1;
+  string fleetId = 2;
+  string driverId = 3;
+  string assignedBy = 4;
+}
+
+message UpdateDeliveryRequest {
+  string deliveryId = 1;
+  Delivery updates = 2;
+}
+
+message TrackDeliveryRequest {
+  string trackingNumber = 1;
+}
+
+message DeliveryStatusHistory {
+  string deliveryId = 1;
+  repeated StatusUpdate updates = 2;
+}
+
+message StatusUpdate {
+  string status = 1;
+  string timestamp = 2;
+  Location location = 3;
+  string notes = 4;
+  string updatedBy = 5;
+}
+
+message BatchCreateDeliveriesRequest {
+  repeated Delivery deliveries = 1;
+}
+
+message BatchCreateDeliveriesResponse {
+  repeated Delivery successfulDeliveries = 1;
+  repeated FailedDelivery failedDeliveries = 2;
+}
+
+message FailedDelivery {
+  Delivery delivery = 1;
+  string error = 2;
+}
+
+message EstimateDeliveryRequest {
+  Location origin = 1;
+  Location destination = 2;
+  repeated DeliveryItem items = 3;
+  string deliveryType = 4;
+}
+
+message EstimateDeliveryResponse {
+  string estimatedTime = 1;
+  double estimatedCost = 2;
+  double distance = 3;
+  string suggestedFleet = 4;
+}

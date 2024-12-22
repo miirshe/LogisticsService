@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package warehouse;
+
+service WarehouseService {
+  rpc CreateWarehouse (CreateWarehouseRequest) returns (Warehouse) {}
+  rpc GetWarehouse (GetWarehouseRequest) returns (Warehouse) {}
+  rpc UpdateWarehouse (UpdateWarehouseRequest) returns (Warehouse) {}
+  rpc DeleteWarehouse (DeleteWarehouseRequest) returns (DeleteWarehouseResponse) {}
+  rpc ListWarehouses (ListWarehousesRequest) returns (ListWarehousesResponse) {}
+  rpc AssignInventory (AssignInventoryRequest) returns (Warehouse) {}
+}
+
+message Warehouse {
+  string id = 1;
+  string name = 2;
+  Location location = 3;
+  string type = 4;
+  int32 capacity = 5;
+  repeated string inventoryIds = 6;
+  string status = 7;
+  map<string, string> meta = 8;
+  string lastUpdated = 9;
+}
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+  string address = 3;
+  string city = 4;
+  string state = 5;
+  string country = 6;
+  string postalCode = 7;
+}
+
+message CreateWarehouseRequest {
+  Warehouse warehouse = 1;
+}
+
+message GetWarehouseRequest {
+  string id = 1;
+}
+
+message UpdateWarehouseRequest {
+  string id = 1;
+  Warehouse warehouse = 2;
+}
+
+message DeleteWarehouseRequest {
+  string id = 1;
+}
+
+message DeleteWarehouseResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListWarehousesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string type = 3;
+  string status = 4;
+  string city = 5;
+}
+
+message ListWarehousesResponse {
+  repeated Warehouse warehouses = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message AssignInventoryRequest {
+  string warehouseId = 1;
+  repeated string inventoryIds = 2;
+}

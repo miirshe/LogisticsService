@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package route;
+
+service RouteService {
+  rpc CreateRoute (CreateRouteRequest) returns (Route) {}
+  rpc GetRoute (GetRouteRequest) returns (Route) {}
+  rpc UpdateRoute (UpdateRouteRequest) returns (Route) {}
+  rpc DeleteRoute (DeleteRouteRequest) returns (DeleteRouteResponse) {}
+  rpc ListRoutes (ListRoutesRequest) returns (ListRoutesResponse) {}
+  rpc OptimizeRoute (OptimizeRouteRequest) returns (Route) {}
+  rpc TrackRoute (TrackRouteRequest) returns (Route) {}
+}
+
+message Route {
+  string id = 1;
+  string deliveryId = 2;
+  string fleetId = 3;
+  string driverId = 4;
+  Location origin = 5;
+  Location destination = 6;
+  repeated Location waypoints = 7;
+  string status = 8;
+  double estimatedDistance = 9;
+  int32 estimatedDuration = 10;
+  repeated RouteEvent events = 11;
+  map<string, string> meta = 12;
+  string lastUpdated = 13;
+}
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+  string address = 3;
+  string timestamp = 4;
+}
+
+message RouteEvent {
+  string id = 1;
+  string type = 2;
+  Location location = 3;
+  string timestamp = 4;
+  string description = 5;
+  string performedBy = 6;
+}
+
+message CreateRouteRequest {
+  Route route = 1;
+}
+
+message GetRouteRequest {
+  string id = 1;
+}
+
+message UpdateRouteRequest {
+  string id = 1;
+  Route route = 2;
+}
+
+message DeleteRouteRequest {
+  string id = 1;
+}
+
+message DeleteRouteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListRoutesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string status = 3;
+  string fleetId = 4;
+  string driverId = 5;
+  string deliveryId = 6;
+}
+
+message ListRoutesResponse {
+  repeated Route routes = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message OptimizeRouteRequest {
+  string routeId = 1;
+  repeated Location preferredWaypoints = 2;
+  bool avoidTolls = 3;
+  bool avoidHighways = 4;
+}
+
+message TrackRouteRequest {
+  string routeId = 1;
+}

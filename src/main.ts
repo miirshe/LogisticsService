@@ -9,15 +9,35 @@ async function bootstrap() {
     {
       transport: Transport.GRPC,
       options: {
-        package: 'logistics',
-        protoPath: join(__dirname, '../proto/logistics.proto'),
+        package: [
+          'logistics',
+          'delivery',
+          'fleet',
+          'warehouse',
+          'inventory',
+          'route',
+        ],
+        protoPath: [
+          join(__dirname, '..', 'proto', 'logistics.proto'),
+          join(__dirname, '..', 'proto', 'delivery.proto'),
+          join(__dirname, '..', 'proto', 'fleet.proto'),
+          join(__dirname, '..', 'proto', 'warehouse.proto'),
+          join(__dirname, '..', 'proto', 'inventory.proto'),
+          join(__dirname, '..', 'proto', 'route.proto'),
+        ],
         url: process.env.GRPC_URL || 'localhost:50051',
       },
     },
   );
 
   await app.listen();
-  console.log('Logistics Microservice is listening on gRPC');
+  console.log(
+    '🚀 Logistics Microservice is listening on:',
+    process.env.GRPC_URL || 'localhost:50051',
+  );
 }
 
-bootstrap();
+bootstrap().catch((error) => {
+  console.error('Failed to start application:', error);
+  process.exit(1);
+});

@@ -3,146 +3,162 @@ syntax = "proto3";
 package logistics;
 
 service LogisticsService {
-  // Fleet Management
-  rpc CreateFleet (CreateFleetRequest) returns (Fleet);
-  rpc UpdateFleetLocation (UpdateFleetLocationRequest) returns (Fleet);
-  rpc GetFleet (GetFleetRequest) returns (Fleet);
-
-  // Delivery Management
-  rpc CreateDelivery (CreateDeliveryRequest) returns (Delivery);
-  rpc UpdateDeliveryStatus (UpdateDeliveryStatusRequest) returns (Delivery);
-  rpc GetDelivery (GetDeliveryRequest) returns (Delivery);
-
-  // Warehouse Management
-  rpc CreateWarehouse (CreateWarehouseRequest) returns (Warehouse);
-  rpc UpdateInventory (UpdateInventoryRequest) returns (Warehouse);
-  rpc GetWarehouse (GetWarehouseRequest) returns (Warehouse);
-
-  // Route Management
-  rpc OptimizeRoute (OptimizeRouteRequest) returns (Route);
-  rpc UpdateRoute (UpdateRouteRequest) returns (Route);
+  rpc GetLogisticsOverview (GetLogisticsOverviewRequest) returns (LogisticsOverview) {}
+  rpc OptimizeLogistics (OptimizeLogisticsRequest) returns (OptimizeLogisticsResponse) {}
+  rpc GenerateReport (GenerateReportRequest) returns (GenerateReportResponse) {}
+  rpc GetAnalytics (GetAnalyticsRequest) returns (GetAnalyticsResponse) {}
+  rpc ManageCapacity (ManageCapacityRequest) returns (ManageCapacityResponse) {}
 }
 
-message Location {
-  double latitude = 1;
-  double longitude = 2;
-  string address = 3;
+message LogisticsOverview {
+  int32 totalDeliveries = 1;
+  int32 activeDeliveries = 2;
+  int32 availableFleets = 3;
+  int32 activeDrivers = 4;
+  repeated WarehouseStatus warehouseStatus = 5;
+  repeated FleetUtilization fleetUtilization = 6;
+  repeated DeliveryMetrics deliveryMetrics = 7;
+  map<string, string> meta = 8;
 }
 
-message Fleet {
-  string id = 1;
-  string vehicleType = 2;
-  string licensePlate = 3;
-  string make = 4;
-  string modelName = 5;
-  int32 year = 6;
-  double capacity = 7;
-  string fuelType = 8;
-  double fuelLevel = 9;
-  string driverName = 10;
-  string driverContact = 11;
-  string driverLicenseNumber = 12;
-  string status = 13;
-  string lastMaintenanceDate = 14;
-  double mileage = 15;
-  Location currentLocation = 16;
-}
-
-message CreateFleetRequest {
-  Fleet fleet = 1;
-}
-
-message UpdateFleetLocationRequest {
-  string fleetId = 1;
-  Location location = 2;
-}
-
-message GetFleetRequest {
-  string id = 1;
-}
-
-message Delivery {
-  string id = 1;
-  string deliveryType = 2;
-  string deliveryStatus = 3;
-  Location origin = 4;
-  Location destination = 5;
-  repeated Location waypoints = 6;
-  string scheduledPickupTime = 7;
-  string actualDeliveryTime = 8;
-  string assignedFleet = 9;
-  repeated DeliveryItem items = 10;
-  string paymentStatus = 11;
-  double paymentAmount = 12;
-}
-
-message DeliveryItem {
-  string name = 1;
-  int32 quantity = 2;
-  double weight = 3;
-  bool fragile = 4;
-}
-
-message CreateDeliveryRequest {
-  Delivery delivery = 1;
-}
-
-message UpdateDeliveryStatusRequest {
-  string deliveryId = 1;
-  string status = 2;
-}
-
-message GetDeliveryRequest {
-  string id = 1;
-}
-
-message Warehouse {
-  string id = 1;
-  string name = 2;
-  Location location = 3;
-  string contactPerson = 4;
-  string contactNumber = 5;
-  double capacity = 6;
-  bool isActive = 7;
-  repeated InventoryItem inventory = 8;
-}
-
-message InventoryItem {
-  string itemName = 1;
-  string sku = 2;
-  int32 quantity = 3;
-  string expiryDate = 4;
-}
-
-message CreateWarehouseRequest {
-  Warehouse warehouse = 1;
-}
-
-message UpdateInventoryRequest {
+message WarehouseStatus {
   string warehouseId = 1;
-  repeated InventoryItem items = 2;
+  string name = 2;
+  int32 totalCapacity = 3;
+  int32 usedCapacity = 4;
+  repeated InventoryLevel inventoryLevels = 5;
 }
 
-message GetWarehouseRequest {
-  string id = 1;
+message InventoryLevel {
+  string itemId = 1;
+  string name = 2;
+  int32 quantity = 3;
+  string status = 4;
 }
 
-message Route {
-  string id = 1;
-  string deliveryId = 2;
-  repeated Location waypoints = 3;
-  repeated Location optimizedRoute = 4;
-  double distance = 5;
-  int32 estimatedTime = 6;
-  string trafficConditions = 7;
+message FleetUtilization {
+  string fleetType = 1;
+  int32 total = 2;
+  int32 active = 3;
+  int32 maintenance = 4;
+  double utilizationRate = 5;
 }
 
-message OptimizeRouteRequest {
+message DeliveryMetrics {
+  string deliveryType = 1;
+  int32 total = 2;
+  int32 completed = 3;
+  int32 pending = 4;
+  double averageDeliveryTime = 5;
+  double successRate = 6;
+}
+
+message GetLogisticsOverviewRequest {
+  string startDate = 1;
+  string endDate = 2;
+  repeated string warehouseIds = 3;
+  repeated string fleetTypes = 4;
+}
+
+message OptimizeLogisticsRequest {
+  repeated string deliveryIds = 1;
+  repeated string fleetIds = 2;
+  repeated string warehouseIds = 3;
+  bool prioritizeCost = 4;
+  bool prioritizeTime = 5;
+}
+
+message OptimizeLogisticsResponse {
+  repeated OptimizedRoute routes = 1;
+  repeated FleetAssignment fleetAssignments = 2;
+  repeated WarehouseAllocation warehouseAllocations = 3;
+  double estimatedCostSaving = 4;
+  int32 estimatedTimeReduction = 5;
+}
+
+message OptimizedRoute {
   string deliveryId = 1;
-  repeated Location waypoints = 2;
+  string fleetId = 2;
+  repeated string waypoints = 3;
+  int32 estimatedDuration = 4;
+  double estimatedDistance = 5;
 }
 
-message UpdateRouteRequest {
-  string routeId = 1;
-  repeated Location optimizedRoute = 2;
+message FleetAssignment {
+  string fleetId = 1;
+  repeated string deliveryIds = 2;
+  string startTime = 3;
+  string endTime = 4;
+}
+
+message WarehouseAllocation {
+  string warehouseId = 1;
+  repeated string deliveryIds = 2;
+  int32 allocatedCapacity = 3;
+}
+
+message GenerateReportRequest {
+  string reportType = 1;
+  string startDate = 2;
+  string endDate = 3;
+  string format = 4;
+  map<string, string> filters = 5;
+}
+
+message GenerateReportResponse {
+  string reportId = 1;
+  string reportUrl = 2;
+  string generatedAt = 3;
+  string expiresAt = 4;
+}
+
+message GetAnalyticsRequest {
+  string metricType = 1;
+  string startDate = 2;
+  string endDate = 3;
+  string groupBy = 4;
+  repeated string dimensions = 5;
+}
+
+message GetAnalyticsResponse {
+  repeated AnalyticsMetric metrics = 1;
+  repeated string dimensions = 2;
+  string period = 3;
+}
+
+message AnalyticsMetric {
+  string name = 1;
+  double value = 2;
+  string dimension = 3;
+  string timestamp = 4;
+}
+
+message ManageCapacityRequest {
+  repeated string warehouseIds = 1;
+  repeated string fleetIds = 2;
+  string startDate = 3;
+  string endDate = 4;
+  bool optimize = 5;
+}
+
+message ManageCapacityResponse {
+  repeated CapacityAllocation allocations = 1;
+  repeated Alert alerts = 2;
+  map<string, double> utilizationRates = 3;
+}
+
+message CapacityAllocation {
+  string resourceId = 1;
+  string resourceType = 2;
+  int32 allocatedCapacity = 3;
+  int32 availableCapacity = 4;
+  repeated string constraints = 5;
+}
+
+message Alert {
+  string type = 1;
+  string resourceId = 2;
+  string message = 3;
+  string severity = 4;
+  string timestamp = 5;
 }

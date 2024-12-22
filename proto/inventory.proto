@@ -1,0 +1,99 @@
+syntax = "proto3";
+
+package inventory;
+
+service InventoryService {
+  rpc CreateInventory (CreateInventoryRequest) returns (Inventory) {}
+  rpc GetInventory (GetInventoryRequest) returns (Inventory) {}
+  rpc UpdateInventory (UpdateInventoryRequest) returns (Inventory) {}
+  rpc DeleteInventory (DeleteInventoryRequest) returns (DeleteInventoryResponse) {}
+  rpc ListInventories (ListInventoriesRequest) returns (ListInventoriesResponse) {}
+  rpc AdjustStock (AdjustStockRequest) returns (Inventory) {}
+  rpc TransferStock (TransferStockRequest) returns (TransferStockResponse) {}
+}
+
+message Inventory {
+  string id = 1;
+  string itemCode = 2;
+  string name = 3;
+  string description = 4;
+  string category = 5;
+  int32 quantity = 6;
+  double unitPrice = 7;
+  string warehouseId = 8;
+  string status = 9;
+  repeated StockMovement stockMovements = 10;
+  map<string, string> meta = 11;
+  string lastUpdated = 12;
+}
+
+message StockMovement {
+  string id = 1;
+  string type = 2;
+  int32 quantity = 3;
+  string fromWarehouseId = 4;
+  string toWarehouseId = 5;
+  string reason = 6;
+  string timestamp = 7;
+  string performedBy = 8;
+}
+
+message CreateInventoryRequest {
+  Inventory inventory = 1;
+}
+
+message GetInventoryRequest {
+  string id = 1;
+}
+
+message UpdateInventoryRequest {
+  string id = 1;
+  Inventory inventory = 2;
+}
+
+message DeleteInventoryRequest {
+  string id = 1;
+}
+
+message DeleteInventoryResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListInventoriesRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  string category = 3;
+  string warehouseId = 4;
+  string status = 5;
+}
+
+message ListInventoriesResponse {
+  repeated Inventory inventories = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
+}
+
+message AdjustStockRequest {
+  string inventoryId = 1;
+  int32 adjustment = 2;
+  string reason = 3;
+  string performedBy = 4;
+}
+
+message TransferStockRequest {
+  string inventoryId = 1;
+  int32 quantity = 2;
+  string fromWarehouseId = 3;
+  string toWarehouseId = 4;
+  string reason = 5;
+  string performedBy = 6;
+}
+
+message TransferStockResponse {
+  bool success = 1;
+  string message = 2;
+  Inventory sourceInventory = 3;
+  Inventory destinationInventory = 4;
+}
