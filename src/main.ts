@@ -25,7 +25,7 @@ async function bootstrap() {
           join(__dirname, '..', 'proto', 'inventory.proto'),
           join(__dirname, '..', 'proto', 'route.proto'),
         ],
-        url: process.env.GRPC_URL || 'localhost:50051',
+        url: process.env.GRPC_URL,
       },
     },
   );
@@ -33,7 +33,7 @@ async function bootstrap() {
   await app.listen();
   console.log(
     '🚀 Logistics Microservice is listening on:',
-    process.env.GRPC_URL || 'localhost:50051',
+    process.env.GRPC_URL,
   );
 }
 

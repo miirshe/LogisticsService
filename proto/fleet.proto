@@ -13,18 +13,40 @@ service FleetService {
 }
 
 message Fleet {
+  // ID and Type Info
   string id = 1;
-  string fleetType = 2;
-  string registrationNumber = 3;
-  string model = 4;
-  string manufacturer = 5;
+  string vehicleType = 2;
+  string licensePlate = 3;
+  
+  // Vehicle Details
+  string make = 4;
+  string modelName = 5;
   int32 year = 6;
-  string status = 7;
-  string driverId = 8;
-  Location currentLocation = 9;
-  repeated MaintenanceRecord maintenanceRecords = 10;
-  string lastUpdated = 11;
-  map<string, string> meta = 12;
+  int32 capacity = 7;
+  
+  // Fuel Information
+  string fuelType = 8;
+  double fuelLevel = 9;
+  
+  // Driver Information
+  string driverId = 10;
+  string driverName = 11;
+  string driverContact = 12;
+  string driverLicenseNumber = 13;
+  
+  // Status and Tracking
+  string status = 14;
+  string lastMaintenanceDate = 15;
+  int32 mileage = 16;
+  Location currentLocation = 17;
+  
+  // Additional Fields from Schema
+  string fleetType = 18;
+  string registrationNumber = 19;
+  string manufacturer = 20;
+  repeated MaintenanceRecord maintenanceRecords = 21;
+  string lastUpdated = 22;
+  map<string, string> meta = 23;
 }
 
 message Location {
@@ -71,8 +93,9 @@ message ListFleetsRequest {
   int32 page = 1;
   int32 limit = 2;
   string status = 3;
-  string fleetType = 4;
+  string vehicleType = 4;
   string driverId = 5;
+  string fleetType = 6;
 }
 
 message ListFleetsResponse {
@@ -85,6 +108,9 @@ message ListFleetsResponse {
 message AssignDriverRequest {
   string fleetId = 1;
   string driverId = 2;
+  string driverName = 3;
+  string driverContact = 4;
+  string driverLicenseNumber = 5;
 }
 
 message TrackFleetRequest {
