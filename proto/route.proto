@@ -9,39 +9,56 @@ service RouteService {
   rpc DeleteRoute (DeleteRouteRequest) returns (DeleteRouteResponse) {}
   rpc ListRoutes (ListRoutesRequest) returns (ListRoutesResponse) {}
   rpc OptimizeRoute (OptimizeRouteRequest) returns (Route) {}
-  rpc TrackRoute (TrackRouteRequest) returns (Route) {}
+  rpc AssignFleet (AssignFleetRequest) returns (Route) {}
+  rpc UpdateRouteStatus (UpdateRouteStatusRequest) returns (Route) {}
 }
 
 message Route {
   string id = 1;
-  string deliveryId = 2;
+  string routeNumber = 2;
   string fleetId = 3;
   string driverId = 4;
-  Location origin = 5;
-  Location destination = 6;
-  repeated Location waypoints = 7;
-  string status = 8;
-  double estimatedDistance = 9;
-  int32 estimatedDuration = 10;
-  repeated RouteEvent events = 11;
-  map<string, string> meta = 12;
-  string lastUpdated = 13;
+  repeated Waypoint waypoints = 5;
+  string status = 6;
+  string startTime = 7;
+  string endTime = 8;
+  double totalDistance = 9;
+  double estimatedDuration = 10;
+  double actualDuration = 11;
+  repeated DeliveryStop deliveryStops = 12;
+  repeated string deliveryIds = 13;
+  RouteMetrics metrics = 14;
+  map<string, string> meta = 15;
+  string lastUpdated = 16;
+  string createdAt = 17;
 }
 
-message Location {
+message Waypoint {
   double latitude = 1;
   double longitude = 2;
   string address = 3;
-  string timestamp = 4;
+  string type = 4;
+  int32 sequence = 5;
+  string estimatedArrival = 6;
+  string actualArrival = 7;
 }
 
-message RouteEvent {
-  string id = 1;
-  string type = 2;
-  Location location = 3;
-  string timestamp = 4;
-  string description = 5;
-  string performedBy = 6;
+message DeliveryStop {
+  string deliveryId = 1;
+  string status = 2;
+  string scheduledTime = 3;
+  string actualTime = 4;
+  Waypoint location = 5;
+  string notes = 6;
+}
+
+message RouteMetrics {
+  double fuelConsumption = 1;
+  double co2Emission = 2;
+  int32 totalStops = 3;
+  int32 completedStops = 4;
+  double efficiency = 5;
+  double averageSpeed = 6;
 }
 
 message CreateRouteRequest {
@@ -72,7 +89,8 @@ message ListRoutesRequest {
   string status = 3;
   string fleetId = 4;
   string driverId = 5;
-  string deliveryId = 6;
+  string startDate = 6;
+  string endDate = 7;
 }
 
 message ListRoutesResponse {
@@ -84,11 +102,18 @@ message ListRoutesResponse {
 
 message OptimizeRouteRequest {
   string routeId = 1;
-  repeated Location preferredWaypoints = 2;
-  bool avoidTolls = 3;
-  bool avoidHighways = 4;
+  repeated Waypoint waypoints = 2;
+  string optimizationType = 3;
 }
 
-message TrackRouteRequest {
+message AssignFleetRequest {
   string routeId = 1;
+  string fleetId = 2;
+  string driverId = 3;
+}
+
+message UpdateRouteStatusRequest {
+  string routeId = 1;
+  string status = 2;
+  string notes = 3;
 }

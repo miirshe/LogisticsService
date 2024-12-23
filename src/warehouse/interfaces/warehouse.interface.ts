@@ -1,21 +1,59 @@
-import { Document } from 'mongoose';
-import { Location } from '../../fleet/interfaces/fleet.interface';
-
-export interface InventoryItem {
-  itemName: string;
-  sku: string;
-  quantity: number;
-  expiryDate?: Date;
+export interface Location {
+  latitude: number;
+  longitude: number;
+  address: string;
+  city: string;
+  country: string;
+  postalCode?: string;
 }
 
-export interface Warehouse extends Document {
+export interface Warehouse {
+  id?: string;
   name: string;
-  location: Location;
-  contactPerson: string;
-  contactNumber: string;
+  code: string;
+  type: string;
   capacity: number;
-  isActive: boolean;
-  inventory: InventoryItem[];
-  createdAt: Date;
-  updatedAt: Date;
+  location: Location;
+  status?: string;
+  managers: string[];
+  lastUpdated?: string;
+  meta?: { [key: string]: string };
+}
+
+export interface CreateWarehouseRequest {
+  warehouse: Warehouse;
+}
+
+export interface GetWarehouseRequest {
+  id: string;
+}
+
+export interface UpdateWarehouseRequest {
+  id: string;
+  warehouse: Partial<Warehouse>;
+}
+
+export interface DeleteWarehouseRequest {
+  id: string;
+}
+
+export interface DeleteWarehouseResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface ListWarehousesRequest {
+  page?: number;
+  limit?: number;
+  type?: string;
+  status?: string;
+  city?: string;
+  country?: string;
+}
+
+export interface ListWarehousesResponse {
+  warehouses: Warehouse[];
+  total: number;
+  page: number;
+  limit: number;
 }

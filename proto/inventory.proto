@@ -3,97 +3,112 @@ syntax = "proto3";
 package inventory;
 
 service InventoryService {
-  rpc CreateInventory (CreateInventoryRequest) returns (Inventory) {}
-  rpc GetInventory (GetInventoryRequest) returns (Inventory) {}
-  rpc UpdateInventory (UpdateInventoryRequest) returns (Inventory) {}
-  rpc DeleteInventory (DeleteInventoryRequest) returns (DeleteInventoryResponse) {}
-  rpc ListInventories (ListInventoriesRequest) returns (ListInventoriesResponse) {}
-  rpc AdjustStock (AdjustStockRequest) returns (Inventory) {}
-  rpc TransferStock (TransferStockRequest) returns (TransferStockResponse) {}
+  rpc AddInventoryItem (AddInventoryItemRequest) returns (InventoryItem) {}
+  rpc UpdateInventoryItem (UpdateInventoryItemRequest) returns (InventoryItem) {}
+  rpc GetInventoryItem (GetInventoryItemRequest) returns (InventoryItem) {}
+  rpc ListInventoryItems (ListInventoryItemsRequest) returns (ListInventoryItemsResponse) {}
+  rpc DeleteInventoryItem (DeleteInventoryItemRequest) returns (DeleteInventoryItemResponse) {}
+  rpc AdjustInventoryQuantity (AdjustInventoryQuantityRequest) returns (InventoryItem) {}
+  rpc LogInventoryChange (LogInventoryChangeRequest) returns (InventoryLog) {}
+  rpc GetInventoryLogs (GetInventoryLogsRequest) returns (GetInventoryLogsResponse) {}
 }
 
-message Inventory {
+message InventoryItem {
   string id = 1;
-  string itemCode = 2;
+  string warehouseId = 2;
   string name = 3;
   string description = 4;
   string category = 5;
-  int32 quantity = 6;
-  double unitPrice = 7;
-  string warehouseId = 8;
-  string status = 9;
-  repeated StockMovement stockMovements = 10;
-  map<string, string> meta = 11;
-  string lastUpdated = 12;
+  string sku = 6;
+  int32 quantity = 7;
+  double unitPrice = 8;
+  string unit = 9;
+  string status = 10;
+  string lastUpdated = 11;
+  map<string, string> meta = 12;
 }
 
-message StockMovement {
+message InventoryLog {
   string id = 1;
-  string type = 2;
-  int32 quantity = 3;
-  string fromWarehouseId = 4;
-  string toWarehouseId = 5;
-  string reason = 6;
-  string timestamp = 7;
-  string performedBy = 8;
+  string warehouseId = 2;
+  string itemId = 3;
+  string changeType = 4;
+  int32 quantityBefore = 5;
+  int32 quantityAfter = 6;
+  int32 quantityChanged = 7;
+  string reason = 8;
+  string reference = 9;
+  string userId = 10;
+  string timestamp = 11;
 }
 
-message CreateInventoryRequest {
-  Inventory inventory = 1;
+message AddInventoryItemRequest {
+  string warehouseId = 1;
+  InventoryItem item = 2;
 }
 
-message GetInventoryRequest {
-  string id = 1;
+message UpdateInventoryItemRequest {
+  string warehouseId = 1;
+  string itemId = 2;
+  InventoryItem item = 3;
 }
 
-message UpdateInventoryRequest {
-  string id = 1;
-  Inventory inventory = 2;
+message GetInventoryItemRequest {
+  string warehouseId = 1;
+  string itemId = 2;
 }
 
-message DeleteInventoryRequest {
-  string id = 1;
+message ListInventoryItemsRequest {
+  string warehouseId = 1;
+  string category = 2;
+  string status = 3;
+  int32 page = 4;
+  int32 limit = 5;
 }
 
-message DeleteInventoryResponse {
-  bool success = 1;
-  string message = 2;
-}
-
-message ListInventoriesRequest {
-  int32 page = 1;
-  int32 limit = 2;
-  string category = 3;
-  string warehouseId = 4;
-  string status = 5;
-}
-
-message ListInventoriesResponse {
-  repeated Inventory inventories = 1;
+message ListInventoryItemsResponse {
+  repeated InventoryItem items = 1;
   int32 total = 2;
   int32 page = 3;
   int32 limit = 4;
 }
 
-message AdjustStockRequest {
-  string inventoryId = 1;
-  int32 adjustment = 2;
-  string reason = 3;
-  string performedBy = 4;
+message DeleteInventoryItemRequest {
+  string warehouseId = 1;
+  string itemId = 2;
 }
 
-message TransferStockRequest {
-  string inventoryId = 1;
-  int32 quantity = 2;
-  string fromWarehouseId = 3;
-  string toWarehouseId = 4;
-  string reason = 5;
-  string performedBy = 6;
-}
-
-message TransferStockResponse {
+message DeleteInventoryItemResponse {
   bool success = 1;
   string message = 2;
-  Inventory sourceInventory = 3;
-  Inventory destinationInventory = 4;
+}
+
+message AdjustInventoryQuantityRequest {
+  string warehouseId = 1;
+  string itemId = 2;
+  int32 adjustment = 3;
+  string reason = 4;
+  string reference = 5;
+  string userId = 6;
+}
+
+message LogInventoryChangeRequest {
+  InventoryLog log = 1;
+}
+
+message GetInventoryLogsRequest {
+  string warehouseId = 1;
+  string itemId = 2;
+  string startDate = 3;
+  string endDate = 4;
+  string changeType = 5;
+  int32 page = 6;
+  int32 limit = 7;
+}
+
+message GetInventoryLogsResponse {
+  repeated InventoryLog logs = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 limit = 4;
 }

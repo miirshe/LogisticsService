@@ -1,20 +1,26 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { Location } from '../../fleet/schemas/fleet.schema';
 
 @Schema()
-export class InventoryItem {
+export class Location {
   @Prop({ required: true })
-  itemName: string;
+  latitude: number;
 
-  @Prop({ required: true, unique: true })
-  sku: string;
+  @Prop({ required: true })
+  longitude: number;
 
-  @Prop({ required: true, min: 0 })
-  quantity: number;
+  @Prop({ required: true })
+  address: string;
+
+  @Prop({ required: true })
+  city: string;
+
+  @Prop({ required: true })
+  country: string;
 
   @Prop()
-  expiryDate: Date;
+  postalCode?: string;
 }
 
 @Schema({ timestamps: true })
@@ -22,23 +28,31 @@ export class Warehouse extends Document {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ type: Location, required: true })
-  location: Location;
+  @Prop({ required: true, unique: true })
+  code: string;
 
   @Prop({ required: true })
-  contactPerson: string;
-
-  @Prop({ required: true })
-  contactNumber: string;
+  type: string;
 
   @Prop({ required: true })
   capacity: number;
 
-  @Prop({ default: true })
-  isActive: boolean;
+  @Prop({ type: Location, required: true })
+  location: Location;
 
-  @Prop({ type: [InventoryItem] })
-  inventory: InventoryItem[];
+  @Prop({ default: 'ACTIVE' })
+  status: string;
+
+  @Prop({ type: [String], default: [] })
+  managers: string[];
+
+  @Prop()
+  lastUpdated?: string;
+
+  @Prop({ type: Object, default: {} })
+  meta: { [key: string]: string };
 }
 
-export const WarehouseSchema = SchemaFactory.createForClass(Warehouse);
+export const WarehouseSchema = SchemaFactory.createForClass(Warehouse).plugin(
+  require('mongoose-aggregate-paginate-v2'),
+);

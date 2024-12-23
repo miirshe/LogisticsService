@@ -8,19 +8,6 @@ service WarehouseService {
   rpc UpdateWarehouse (UpdateWarehouseRequest) returns (Warehouse) {}
   rpc DeleteWarehouse (DeleteWarehouseRequest) returns (DeleteWarehouseResponse) {}
   rpc ListWarehouses (ListWarehousesRequest) returns (ListWarehousesResponse) {}
-  rpc AssignInventory (AssignInventoryRequest) returns (Warehouse) {}
-}
-
-message Warehouse {
-  string id = 1;
-  string name = 2;
-  Location location = 3;
-  string type = 4;
-  int32 capacity = 5;
-  repeated string inventoryIds = 6;
-  string status = 7;
-  map<string, string> meta = 8;
-  string lastUpdated = 9;
 }
 
 message Location {
@@ -28,9 +15,21 @@ message Location {
   double longitude = 2;
   string address = 3;
   string city = 4;
-  string state = 5;
-  string country = 6;
-  string postalCode = 7;
+  string country = 5;
+  string postalCode = 6;
+}
+
+message Warehouse {
+  string id = 1;
+  string name = 2;
+  string code = 3;
+  string type = 4;
+  int32 capacity = 5;
+  Location location = 6;
+  string status = 7;
+  repeated string managers = 8;
+  string lastUpdated = 9;
+  map<string, string> meta = 10;
 }
 
 message CreateWarehouseRequest {
@@ -61,6 +60,7 @@ message ListWarehousesRequest {
   string type = 3;
   string status = 4;
   string city = 5;
+  string country = 6;
 }
 
 message ListWarehousesResponse {
@@ -68,9 +68,4 @@ message ListWarehousesResponse {
   int32 total = 2;
   int32 page = 3;
   int32 limit = 4;
-}
-
-message AssignInventoryRequest {
-  string warehouseId = 1;
-  repeated string inventoryIds = 2;
 }
